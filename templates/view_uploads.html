@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% comment %} {% if user.is_authenticated%}
+    {% include "navbar.html" %}
+{% endif %} {% endcomment %}
+
+<!-- Upload form. Note enctype attribute! -->
+    {% comment %} <h1> Upload File Section </h1> {% endcomment %}
+    {% include 'upload_book.html' %}
+
+    <br>
+
+    <h5>
+        <div class="container-md" class="switch-btn">
+            <input type="checkbox" id="are_my_books" /> My Books <br />
+        </div>
+    </h5>
+<div class="container-md">
+  <div class="page-header">
+    <div class="row">
+      <div class="col-md-12 col-sm-12">
+        <div class="title">
+          <h1>List of All books</h1><br><br>
+        </div>
+        {% if documents %}
+        <div class="col-sm-12 container-md ">
+          <table class="data-table table stripe " id="DataTables_Table_0" role="grid">
+            <thead>
+              <tr>
+                <th>Book ID</th>
+                <th>uploaded pdf</th>
+                <th>Publish Date</th>
+                <th>Publish Time</th>
+                <th>Author</th>
+                <th>Pen Name</th>
+              </tr>
+            </thead>
+
+            <tbody id="body1">
+              {% for document in documents %}
+              <tr>
+                <td>{{document.id}}.</td>
+                <td style="word-wrap: break-word;min-width: 160px;max-width: 160px;" >{{ document }}</td>
+                <td>{{document.publish_date}}</td>
+                <td>{{document.publish_time}}</td>
+                <td>
+                  <a href="{% url 'user_details' document.author.id %}">
+                    {{document.author}}
+                  </a>
+                </td>
+                <td>{{document.pen_name}}</td>
+                <td>
+                  <a href="{{ document.docfile.url }}" target="_blank">
+                    <button class="btn btn-outline-primary">Download</button>
+                  </a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+
+            <tbody id="body2" style="display:none;">
+              {% for document in documents %}
+              {% if document.author == user %}
+              <tr>
+                <td>{{document.id}}.</td>
+                <td style="word-wrap: break-word;min-width: 160px;max-width: 160px;" >{{ document }}</td>
+                <td>{{document.publish_date}}</td>
+                <td>{{document.publish_time}}</td>
+                <td>
+                  <a href="{% url 'user_details' document.author.id %}">
+                    {{document.author}}
+                  </a>
+                </td>
+                <td>{{document.pen_name}}</td>
+                <td>
+                  <a href="{{ document.docfile.url }}" target="_blank">
+                    <button type="submit" value={{document.docfile.url}} onclick="location.href='{% url 'sendemail' pk=user.id bid=document.id %}'" class="btn btn-outline-primary">Download</button>
+                  </a>
+                </td>
+              </tr>
+              {% endif %}
+              {% endfor %}
+            </tbody>
+
+          </table>
+        </div>
+        {% else %}
+        <p>No documents.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+ <script 
+   src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<script>
+const checkbox = document.getElementById('are_my_books')
+    checkbox.addEventListener('change', (event) => {
+      if (event.currentTarget.checked) {
+        $("#body1").hide();
+        $("#body2").show();
+      } else {
+        $("#body2").hide();
+        $("#body1").show();
+      }
+    }) 
+
+</script>
+
+{% endblock %}
