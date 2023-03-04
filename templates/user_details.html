@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% load cache %}
+
 
 
 {% block content %}
@@ -10,7 +10,7 @@
 {% endif %}
 
 <br><br><br>
-{% cache 100 user_info %}
+
 {% if not user.is_author %}
 
 <div class="container-md">
@@ -197,9 +197,7 @@
 
 {% endif %}
 
-{% endcache %}
+
 
 
 {% endblock %}
-
-{% load cache %}
